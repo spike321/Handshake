@@ -4,36 +4,48 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.AccountViewHolder> {
-    private String[] mDataset;
+import java.util.ArrayList;
 
-    public static class AccountViewHolder extends RecyclerView.ViewHolder {
-        public AccountViewHolder(View v) {
+public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.ViewHolder> {
+    private ArrayList<SMAccount> mDataset;
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        private ImageView mPlatformImage;
+        private TextView mPlatformName;
+        private TextView mAccountUserId;
+
+        public ViewHolder(View v) {
             super(v);
+            mPlatformImage = (ImageView) v.findViewById(R.id.platform_image);
+            mPlatformName = (TextView) v.findViewById(R.id.platform_name);
+            mAccountUserId = (TextView) v.findViewById(R.id.account_user_id);
         }
     }
 
-    public AccountsAdapter(String[] myDataset) {
+    public AccountsAdapter(ArrayList<SMAccount> myDataset) {
         mDataset = myDataset;
     }
 
     @Override
-    public AccountsAdapter.AccountViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.account_row, parent, false);
-        AccountViewHolder vh = new AccountViewHolder(v);
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.account_row, parent, false);
+        ViewHolder vh = new ViewHolder(v);
         return vh;
     }
 
     @Override
-    public void onBindViewHolder(AccountViewHolder accountViewHolder, int i) {
+    public void onBindViewHolder(ViewHolder viewHolder, int i) {
+        SMAccount account = mDataset.get(i);
+        viewHolder.mAccountUserId.setText(account.getUserId());
+        viewHolder.mPlatformName.setText(account.getPlatformName());
 
     }
 
     @Override
     public int getItemCount() {
-        return mDataset.length;
+        return mDataset.size();
     }
 }
