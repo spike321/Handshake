@@ -17,8 +17,6 @@ import com.facebook.FacebookSdk;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
-import java.util.ArrayList;
-
 public class NewSMAccountAdapter extends RecyclerView.Adapter<NewSMAccountAdapter.ViewHolder> {
     private String[] mDataset;
     private Context mContext;
@@ -27,14 +25,12 @@ public class NewSMAccountAdapter extends RecyclerView.Adapter<NewSMAccountAdapte
         private ImageView mPlatformImage;
         private TextView mPlatformName;
         private RelativeLayout mRow;
-        private Button mLoginButton;
 
         public ViewHolder(View v) {
             super(v);
             mPlatformImage = (ImageView) v.findViewById(R.id.platform_image);
             mPlatformName = (TextView) v.findViewById(R.id.platform_name);
             mRow = (RelativeLayout) v.findViewById(R.id.row);
-           // mLoginButton = (LoginButton) v.findViewById(R.id.fb_login);
         }
     }
 
@@ -60,27 +56,6 @@ public class NewSMAccountAdapter extends RecyclerView.Adapter<NewSMAccountAdapte
             @Override
             public void onClick(View v) {
                 System.out.println(accountType + "^^^^^^^^^^^^^^^^^^^^");
-            }
-        });
-        CallbackManager callbackManager = CallbackManager.Factory.create();
-
-        LoginButton fbLogin = (LoginButton) holder.mLoginButton;
-        fbLogin.setFragment(((HandshakeActivity)mContext).getSupportFragmentManager().findFragmentByTag("add_account_fragment"));
-        fbLogin.setReadPermissions("public_profile");
-        fbLogin.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                System.out.println("Successfull login");
-            }
-
-            @Override
-            public void onCancel() {
-                System.out.println("Cancel");
-            }
-
-            @Override
-            public void onError(FacebookException e) {
-                System.out.println("Failed Login");
             }
         });
     }
