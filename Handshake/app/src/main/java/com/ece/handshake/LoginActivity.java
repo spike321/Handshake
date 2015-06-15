@@ -17,8 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class LoginActivity extends Activity implements View.OnClickListener,
-        GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener{
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private static final int RC_SIGN_IN = 0;
 
@@ -57,7 +56,6 @@ public class LoginActivity extends Activity implements View.OnClickListener,
     public void onConnected(Bundle bundle) {
         mSignInClicked = false;
         Toast.makeText(this, "User is connected!", Toast.LENGTH_LONG).show();
-        Intent intent = new Intent(this, MainActivity.class);
         Person person = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
         Person.Name name = person.getName();
 
@@ -67,8 +65,8 @@ public class LoginActivity extends Activity implements View.OnClickListener,
         values.put(SharedPreferencesManager.GPLUS_EMAIL, Plus.AccountApi.getAccountName(mGoogleApiClient));
         values.put(SharedPreferencesManager.GPLUS_URL, person.getUrl());
         SharedPreferencesManager.saveBasicInfo(this, values);
-
-        startActivity(intent);
+        SharedPreferencesManager.setIsUserLoggedIn(this, true);
+        finish();
     }
 
     @Override

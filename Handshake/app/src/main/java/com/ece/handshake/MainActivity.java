@@ -9,6 +9,7 @@ import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcEvent;
 import android.os.Parcelable;
+import android.provider.ContactsContract;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.FragmentManager;
@@ -32,6 +33,8 @@ import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+
+import de.greenrobot.event.EventBus;
 
 
 public class MainActivity extends ActionBarActivity
@@ -62,15 +65,21 @@ public class MainActivity extends ActionBarActivity
         }
     }
 
+    private void checkIsLoggedIn() {
+        if (!SharedPreferencesManager.isUserLoggedIn(this)) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_handshake);
-
-        mNavigationDrawerFragment = (NavigationDrawerFragment)
-                getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
+        checkIsLoggedIn();
+        //EventBus.getDefault().register(this);
+        mNavigationDrawerFragment = (NavigationDrawerFragment)getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
-        // Set up the drawer.
         mNavigationDrawerFragment.setUp(R.id.navigation_drawer,(DrawerLayout) findViewById(R.id.drawer_layout));
 
         FacebookSdk.sdkInitialize(this);
@@ -106,11 +115,9 @@ public class MainActivity extends ActionBarActivity
 
     @Override
     public NdefMessage createNdefMessage(NfcEvent event) {
-        String text = ("Beam me up, Android!\n\n" +
-                "Beam Time: " + System.currentTimeMillis());
+        String text = ("Zeki Sherif");
         NdefMessage msg = new NdefMessage(
-                new NdefRecord[] { createMimeRecord(
-                        "application/vnd.com.ece.handshake.beam", text.getBytes())
+                new NdefRecord[] { createMimeRecord("application/vnd.com.ece.handshake.beam", text.getBytes())
                         /**
                          * The Android Application Record (AAR) is commented out. When a device
                          * receives a push with an AAR in it, the application specified in the AAR
@@ -149,6 +156,11 @@ public class MainActivity extends ActionBarActivity
         NdefMessage msg = (NdefMessage) rawMsgs[0];
         // record 0 contains the MIME type, record 1 is the AAR, if present
         System.out.println(new String(msg.getRecords()[0].getPayload()));
+
+        Intent newContactIntent = new Intent(ContactsContract.Intents.Insert.ACTION);
+        newContactIntent.setType(ContactsContract.RawContacts.CONTENT_TYPE);
+        newContactIntent.putExtra(ContactsContract.Intents.Insert.NAME, new String(msg.getRecords()[0].getPayload()));
+        startActivity(newContactIntent);
     }
 
     /**

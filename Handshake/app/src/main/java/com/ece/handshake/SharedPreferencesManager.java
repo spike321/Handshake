@@ -13,6 +13,9 @@ public class SharedPreferencesManager {
     public final static String GPLUS_PHOTO = "GPlusPhoto";
     public final static String GPLUS_EMAIL = "GPlusEmail";
     public final static String GPLUS_URL = "GPlusURL";
+    
+    private final static String LOGIN_INFO = "LoginInfo";
+    private final static String IS_LOGGED_IN = "IsUserLoggedIn";
 
     public static void saveBasicInfo(Context context, Map<String, String> values) {
         SharedPreferences sharedPrefs = context.getSharedPreferences(BASIC_USER_INFO, Context.MODE_PRIVATE);
@@ -23,5 +26,16 @@ public class SharedPreferencesManager {
         editor.putString(GPLUS_URL, values.get(GPLUS_URL));
         editor.commit();
     }
+    
+    public static boolean isUserLoggedIn(Context context) {
+        SharedPreferences sharedPrefs = context.getSharedPreferences(LOGIN_INFO, Context.MODE_PRIVATE);
+        return sharedPrefs.getBoolean(IS_LOGGED_IN, false);
+    }
 
+    public static void setIsUserLoggedIn(Context context, boolean isLoggedIn) {
+        SharedPreferences sharedPrefs = context.getSharedPreferences(LOGIN_INFO, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPrefs.edit();
+        editor.putBoolean(IS_LOGGED_IN, isLoggedIn);
+        editor.commit();
+    }
 }
