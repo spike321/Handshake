@@ -32,9 +32,6 @@ import com.facebook.login.LoginResult;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-
-import de.greenrobot.event.EventBus;
 
 
 public class MainActivity extends ActionBarActivity
@@ -76,6 +73,7 @@ public class MainActivity extends ActionBarActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_handshake);
+        MediaPlatformHelper.initializePlatformImgMapping(this);
         checkIsLoggedIn();
         //EventBus.getDefault().register(this);
         mNavigationDrawerFragment = (NavigationDrawerFragment)getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
@@ -137,6 +135,10 @@ public class MainActivity extends ActionBarActivity
         // Check to see that the Activity started due to an Android Beam
         if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction())) {
             processIntent(getIntent());
+
+            Intent i = new Intent();
+            i.setAction("do_nothing");
+            setIntent(i);
         }
     }
 

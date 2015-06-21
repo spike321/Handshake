@@ -25,7 +25,7 @@ public class SMDialogFragment extends DialogFragment {
         //FIXME: Remove hard coded values later
         String[] supportedSites = {"Facebook"};
 
-        mAdapter = new NewSMAccountAdapter(supportedSites, getActivity());
+        mAdapter = new NewSMAccountAdapter(MediaPlatformHelper.getSupportedPlatforms(), getActivity());
         mRecyclerView.setAdapter(mAdapter);
 
         getDialog().setTitle("Add new account");
