@@ -1,4 +1,4 @@
-package com.ece.handshake;
+package com.ece.handshake.views;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,6 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
+import com.ece.handshake.presenters.AccountsAdapter;
+import com.ece.handshake.R;
+import com.ece.handshake.model.data.SMAccount;
 import com.getbase.floatingactionbutton.AddFloatingActionButton;
 
 import java.util.ArrayList;
@@ -23,7 +26,6 @@ public class AccountsFragment extends Fragment {
     public AccountsFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -55,4 +57,6 @@ public class AccountsFragment extends Fragment {
 
         return layout;
     }
+
+
 }

@@ -20,11 +20,11 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <!-- Supported Social Media-->
-    <string name="facebook">FaceBook</string>
-    <string name="twitter">Twitter</string>
-    <string name="linkedIn">LinkedIn</string>
-    <string name="instagram">Instagram</string>
-    <string name="google_plus">Google Plus</string>
-    <string name="pinterest">Pinterest</string>
+    <string name="platform.type.facebook">FaceBook</string>
+    <string name="platform.type.twitter">Twitter</string>
+    <string name="platform.type.linkedIn">LinkedIn</string>
+    <string name="platform.type.instagram">Instagram</string>
+    <string name="platform.type.google_plus">Google Plus</string>
+    <string name="platform.type.pinterest">Pinterest</string>
 
 </resources>

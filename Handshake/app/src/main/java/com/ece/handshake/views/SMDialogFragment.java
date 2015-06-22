@@ -1,4 +1,4 @@
-package com.ece.handshake;
+package com.ece.handshake.views;
 
 
 import android.os.Bundle;
@@ -8,6 +8,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.ece.handshake.helper.MediaPlatformHelper;
+import com.ece.handshake.presenters.NewAccountAdapter;
+import com.ece.handshake.R;
 
 public class SMDialogFragment extends DialogFragment {
     private RecyclerView mRecyclerView;
@@ -22,13 +26,12 @@ public class SMDialogFragment extends DialogFragment {
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        //FIXME: Remove hard coded values later
-        String[] supportedSites = {"Facebook"};
-
-        mAdapter = new NewSMAccountAdapter(MediaPlatformHelper.getSupportedPlatforms(), getActivity());
+        mAdapter = new NewAccountAdapter(MediaPlatformHelper.getSupportedPlatforms(), getActivity());
         mRecyclerView.setAdapter(mAdapter);
 
         getDialog().setTitle("Add new account");
         return v;
     }
+
+
 }

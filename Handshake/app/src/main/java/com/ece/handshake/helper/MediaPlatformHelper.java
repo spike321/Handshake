@@ -1,8 +1,10 @@
-package com.ece.handshake;
+package com.ece.handshake.helper;
 
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+
+import com.ece.handshake.R;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,12 +16,12 @@ public class MediaPlatformHelper {
 
     public static void initializePlatformImgMapping(Context context) {
         final Resources res = context.getResources();
-        platformImgMap.put(context.getString(R.string.facebook), res.getDrawable(R.drawable.facebook_icon));
-        platformImgMap.put(context.getString(R.string.twitter), res.getDrawable(R.drawable.twitter_icon));
-        platformImgMap.put(context.getString(R.string.linkedIn), res.getDrawable(R.drawable.linkedin_icon));
-        platformImgMap.put(context.getString(R.string.instagram), res.getDrawable(R.drawable.instagram_icon));
-        platformImgMap.put(context.getString(R.string.google_plus), res.getDrawable(R.drawable.google_plus_icon));
-        platformImgMap.put(context.getString(R.string.pinterest), res.getDrawable(R.drawable.pinterest_icon));
+        platformImgMap.put(context.getString(R.string.platform_type_facebook), res.getDrawable(R.drawable.facebook_icon));
+        platformImgMap.put(context.getString(R.string.platform_type_twitter), res.getDrawable(R.drawable.twitter_icon));
+        platformImgMap.put(context.getString(R.string.platform_type_linkedIn), res.getDrawable(R.drawable.linkedin_icon));
+        platformImgMap.put(context.getString(R.string.platform_type_instagram), res.getDrawable(R.drawable.instagram_icon));
+        platformImgMap.put(context.getString(R.string.platform_type_google_plus), res.getDrawable(R.drawable.google_plus_icon));
+        platformImgMap.put(context.getString(R.string.platform_type_pinterest), res.getDrawable(R.drawable.pinterest_icon));
 
     }
 

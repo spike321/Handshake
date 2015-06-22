@@ -1,6 +1,7 @@
-package com.ece.handshake;
+package com.ece.handshake.presenters;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,7 +10,10 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.facebook.AccessToken;
+import com.ece.handshake.helper.MediaPlatformHelper;
+import com.ece.handshake.helper.SharedPreferencesManager;
+import com.ece.handshake.R;
+import com.ece.handshake.views.MainActivity;
 import com.facebook.Profile;
 import com.facebook.login.LoginBehavior;
 import com.facebook.login.LoginManager;
@@ -17,7 +21,7 @@ import com.facebook.login.LoginManager;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class NewSMAccountAdapter extends RecyclerView.Adapter<NewSMAccountAdapter.ViewHolder> {
+public class NewAccountAdapter extends RecyclerView.Adapter<NewAccountAdapter.ViewHolder> {
     private ArrayList<String> mDataset;
     private Context mContext;
 
@@ -34,33 +38,28 @@ public class NewSMAccountAdapter extends RecyclerView.Adapter<NewSMAccountAdapte
         }
     }
 
-    public NewSMAccountAdapter(ArrayList<String> myDataset, Context c) {
+    public NewAccountAdapter(ArrayList<String> myDataset, Context c) {
         mDataset = myDataset;
         mContext = c;
     }
 
     @Override
-    public NewSMAccountAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public NewAccountAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.new_sm_account_row, parent, false);
         ViewHolder vh = new ViewHolder(v);
         return vh;
     }
 
     @Override
-    public void onBindViewHolder(NewSMAccountAdapter.ViewHolder holder, int position) {
-        final String accountType = mDataset.get(position);
-        holder.mPlatformName.setText(accountType);
-        holder.mPlatformImage.setImageDrawable(MediaPlatformHelper.getAccountImageResource(accountType));
+    public void onBindViewHolder(NewAccountAdapter.ViewHolder holder, int position) {
+        final String platform = mDataset.get(position);
+        holder.mPlatformName.setText(platform);
+        holder.mPlatformImage.setImageDrawable(MediaPlatformHelper.getAccountImageResource(platform));
 
         holder.mRow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println(accountType + "^^^^^^^^^^^^^^^^^^^^");
-
-                LoginManager.getInstance().setLoginBehavior(LoginBehavior.SSO_WITH_FALLBACK);
-                LoginManager.getInstance().logInWithReadPermissions((MainActivity)mContext, Arrays.asList("public_profile", "user_friends"));
-                Profile prof = Profile.getCurrentProfile();
-                AccessToken token = AccessToken.getCurrentAccessToken();
+                connectAccount(platform);
             }
         });
     }
@@ -68,5 +67,15 @@ public class NewSMAccountAdapter extends RecyclerView.Adapter<NewSMAccountAdapte
     @Override
     public int getItemCount() {
         return mDataset.size();
+    }
+
+    private void connectAccount(String platform) {
+        Resources res = mContext.getResources();
+
+        if (platform.equals(res.getString(R.string.platform_type_facebook))) {
+            LoginManager.getInstance().setLoginBehavior(LoginBehavior.SSO_WITH_FALLBACK);
+            LoginManager.getInstance().logInWithReadPermissions((MainActivity) mContext, Arrays.asList("public_profile", "user_friends"));
+            SharedPreferencesManager.saveFacebookAccountDetails(mContext, Profile.getCurrentProfile());
+        }
     }
 }

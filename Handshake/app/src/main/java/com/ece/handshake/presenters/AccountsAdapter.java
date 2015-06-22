@@ -1,4 +1,4 @@
-package com.ece.handshake;
+package com.ece.handshake.presenters;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -6,6 +6,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.ece.handshake.R;
+import com.ece.handshake.model.data.SMAccount;
 
 import java.util.ArrayList;
 

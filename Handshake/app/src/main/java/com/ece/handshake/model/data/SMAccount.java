@@ -1,4 +1,4 @@
-package com.ece.handshake;
+package com.ece.handshake.model.data;
 
 
 public class SMAccount {

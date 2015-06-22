@@ -1,4 +1,4 @@
-package com.ece.handshake;
+package com.ece.handshake.views;
 
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -10,10 +10,10 @@ import android.nfc.NfcAdapter;
 import android.nfc.NfcEvent;
 import android.os.Parcelable;
 import android.provider.ContactsContract;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
@@ -21,6 +21,9 @@ import android.view.MenuItem;
 import android.support.v4.widget.DrawerLayout;
 import android.widget.Toast;
 
+import com.ece.handshake.helper.MediaPlatformHelper;
+import com.ece.handshake.R;
+import com.ece.handshake.helper.SharedPreferencesManager;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -34,7 +37,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 
-public class MainActivity extends ActionBarActivity
+public class MainActivity extends AppCompatActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks,
         NfcAdapter.CreateNdefMessageCallback{
 
@@ -128,6 +131,7 @@ public class MainActivity extends ActionBarActivity
                 });
         return msg;
     }
+
 
     @Override
     public void onResume() {
