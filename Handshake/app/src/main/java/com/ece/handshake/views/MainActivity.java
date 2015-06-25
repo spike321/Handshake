@@ -1,5 +1,6 @@
 package com.ece.handshake.views;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -81,28 +82,10 @@ public class MainActivity extends AppCompatActivity
         //EventBus.getDefault().register(this);
         mNavigationDrawerFragment = (NavigationDrawerFragment)getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
-        mNavigationDrawerFragment.setUp(R.id.navigation_drawer,(DrawerLayout) findViewById(R.id.drawer_layout));
+        mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
 
         FacebookSdk.sdkInitialize(this);
-        callbackManager = CallbackManager.Factory.create();
 
-        LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                System.out.println("Successfull login");
-                Profile prof = Profile.getCurrentProfile();
-            }
-
-            @Override
-            public void onCancel() {
-                System.out.println("Cancel");
-            }
-
-            @Override
-            public void onError(FacebookException e) {
-                System.out.println("Failed Login");
-            }
-        });
 
         /************ NFC Setup ****************/
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);

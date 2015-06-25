@@ -1,7 +1,6 @@
-package com.ece.handshake.presenters;
+package com.ece.handshake.views;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,19 +10,14 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.ece.handshake.helper.MediaPlatformHelper;
-import com.ece.handshake.helper.SharedPreferencesManager;
 import com.ece.handshake.R;
-import com.ece.handshake.views.MainActivity;
-import com.facebook.Profile;
-import com.facebook.login.LoginBehavior;
-import com.facebook.login.LoginManager;
+import com.ece.handshake.presenters.NewAccountPresenter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class NewAccountAdapter extends RecyclerView.Adapter<NewAccountAdapter.ViewHolder> {
     private ArrayList<String> mDataset;
-    private Context mContext;
+    private NewAccountPresenter presenter;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private ImageView mPlatformImage;
@@ -38,9 +32,9 @@ public class NewAccountAdapter extends RecyclerView.Adapter<NewAccountAdapter.Vi
         }
     }
 
-    public NewAccountAdapter(ArrayList<String> myDataset, Context c) {
+    public NewAccountAdapter(ArrayList<String> myDataset, Context context) {
         mDataset = myDataset;
-        mContext = c;
+        presenter = new NewAccountPresenter(context);
     }
 
     @Override
@@ -59,7 +53,7 @@ public class NewAccountAdapter extends RecyclerView.Adapter<NewAccountAdapter.Vi
         holder.mRow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                connectAccount(platform);
+                presenter.connectAccount(platform);
             }
         });
     }
@@ -67,15 +61,5 @@ public class NewAccountAdapter extends RecyclerView.Adapter<NewAccountAdapter.Vi
     @Override
     public int getItemCount() {
         return mDataset.size();
-    }
-
-    private void connectAccount(String platform) {
-        Resources res = mContext.getResources();
-
-        if (platform.equals(res.getString(R.string.platform_type_facebook))) {
-            LoginManager.getInstance().setLoginBehavior(LoginBehavior.SSO_WITH_FALLBACK);
-            LoginManager.getInstance().logInWithReadPermissions((MainActivity) mContext, Arrays.asList("public_profile", "user_friends"));
-            SharedPreferencesManager.saveFacebookAccountDetails(mContext, Profile.getCurrentProfile());
-        }
     }
 }

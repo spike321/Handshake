@@ -1,4 +1,4 @@
-package com.ece.handshake.presenters;
+package com.ece.handshake.views;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;

@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.ece.handshake.helper.MediaPlatformHelper;
-import com.ece.handshake.presenters.NewAccountAdapter;
 import com.ece.handshake.R;
 
 public class SMDialogFragment extends DialogFragment {

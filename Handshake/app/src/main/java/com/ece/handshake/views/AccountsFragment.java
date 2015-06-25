@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
-import com.ece.handshake.presenters.AccountsAdapter;
 import com.ece.handshake.R;
 import com.ece.handshake.model.data.SMAccount;
 import com.getbase.floatingactionbutton.AddFloatingActionButton;
