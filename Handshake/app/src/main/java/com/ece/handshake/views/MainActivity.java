@@ -1,20 +1,22 @@
 package com.ece.handshake.views;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
+import android.content.res.Configuration;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcEvent;
 import android.os.Parcelable;
 import android.provider.ContactsContract;
-import android.support.v7.app.ActionBar;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
@@ -26,12 +28,7 @@ import com.ece.handshake.helper.MediaPlatformHelper;
 import com.ece.handshake.R;
 import com.ece.handshake.helper.SharedPreferencesManager;
 import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
-import com.facebook.Profile;
-import com.facebook.login.LoginManager;
-import com.facebook.login.LoginResult;
 
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
@@ -39,50 +36,35 @@ import java.security.NoSuchAlgorithmException;
 
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationDrawerFragment.NavigationDrawerCallbacks,
+        implements NavigationView.OnNavigationItemSelectedListener,
         NfcAdapter.CreateNdefMessageCallback{
 
     public CallbackManager callbackManager;
     private NfcAdapter mNfcAdapter;
 
-    private NavigationDrawerFragment mNavigationDrawerFragment;
-
-    private CharSequence mTitle;
-
-    private void facebookHash() {
-        try {
-            PackageInfo info = getPackageManager().getPackageInfo(
-                    "com.ece.handshake",
-                    PackageManager.GET_SIGNATURES);
-            for (Signature signature : info.signatures) {
-                MessageDigest md = MessageDigest.getInstance("SHA");
-                md.update(signature.toByteArray());
-                Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
-            }
-        } catch (PackageManager.NameNotFoundException e) {
-
-        } catch (NoSuchAlgorithmException e) {
-
-        }
-    }
-
-    private void checkIsLoggedIn() {
-        if (!SharedPreferencesManager.isUserLoggedIn(this)) {
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
-        }
-    }
+    private Toolbar mToolBar;
+    private DrawerLayout mDrawer;
+    private ActionBarDrawerToggle mDrawerToggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_handshake);
+        setContentView(R.layout.activity_main);
         MediaPlatformHelper.initializePlatformImgMapping(this);
         checkIsLoggedIn();
         //EventBus.getDefault().register(this);
-        mNavigationDrawerFragment = (NavigationDrawerFragment)getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
-        mTitle = getTitle();
-        mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
+
+        mToolBar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolBar);
+
+        mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawer, mToolBar, R.string.drawer_open,  R.string.drawer_close);
+        mDrawer.setDrawerListener(mDrawerToggle);
+
+        NavigationView navView = (NavigationView) findViewById(R.id.navigation);
+        navView.setNavigationItemSelectedListener(this);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         FacebookSdk.sdkInitialize(this);
 
@@ -115,6 +97,17 @@ public class MainActivity extends AppCompatActivity
         return msg;
     }
 
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        mDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        mDrawerToggle.onConfigurationChanged(newConfig);
+    }
 
     @Override
     public void onResume() {
@@ -164,54 +157,68 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onNavigationDrawerItemSelected(int position) {
-        // update the main content by replacing fragments
+    public boolean onNavigationItemSelected(MenuItem menuItem) {
+
         FragmentManager fragmentManager = getSupportFragmentManager();
-        switch (position) {
-            case 0:
-                mTitle = "Handshake";
-                fragmentManager.beginTransaction().replace(R.id.container, new HomeFragment()).commit();
-                break;
-            case 1:
-                mTitle = getString(R.string.Profiles);
+        int id = menuItem.getItemId();
+        switch (menuItem.getItemId()) {
+            case R.id.drawer_item_connected_accounts:
                 fragmentManager.beginTransaction().replace(R.id.container, new AccountsFragment()).commit();
                 break;
-            case 2:
-                mTitle = getString(R.string.title_section3);
+            case R.id.drawer_item_settings:
                 //TODO: Make Settings page
                 break;
+            case R.id.drawer_item_logout:
+                //TODO: Logout of gplus and take user to login page
+                break;
         }
-    }
-
-    private void restoreActionBar() {
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-        actionBar.setDisplayShowTitleEnabled(true);
-        actionBar.setTitle(mTitle);
+        menuItem.setChecked(true);
+        setTitle(menuItem.getTitle());
+        mDrawer.closeDrawers();
+        return true;
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu) {/*
         if (!mNavigationDrawerFragment.isDrawerOpen()) {
             getMenuInflater().inflate(R.menu.handshake, menu);
             restoreActionBar();
             return true;
-        }
+        }*/
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+        if (mDrawerToggle.onOptionsItemSelected(item)) return true;
 
         return super.onOptionsItemSelected(item);
     }
+
+
+    private void checkIsLoggedIn() {
+        if (!SharedPreferencesManager.isUserLoggedIn(this)) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+        }
+    }
+
+
+    private void facebookHash() {
+        try {
+            PackageInfo info = getPackageManager().getPackageInfo(
+                    "com.ece.handshake",
+                    PackageManager.GET_SIGNATURES);
+            for (Signature signature : info.signatures) {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+
+        } catch (NoSuchAlgorithmException e) {
+
+        }
+    }
+
 }
