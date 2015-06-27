@@ -43,7 +43,7 @@ public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.ViewHo
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int i) {
         SMAccount account = mDataset.get(i);
-        viewHolder.mAccountUserId.setText(account.getUserId());
+        viewHolder.mAccountUserId.setText(account.getName());
         viewHolder.mPlatformName.setText(account.getPlatformName());
         //viewHolder.mPlatformImage.setImageDrawable();
     }

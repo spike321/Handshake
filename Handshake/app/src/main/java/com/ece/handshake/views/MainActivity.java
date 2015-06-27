@@ -24,19 +24,25 @@ import android.view.MenuItem;
 import android.support.v4.widget.DrawerLayout;
 import android.widget.Toast;
 
+import com.ece.handshake.events.NewAccountEvent;
 import com.ece.handshake.helper.MediaPlatformHelper;
 import com.ece.handshake.R;
 import com.ece.handshake.helper.SharedPreferencesManager;
+import com.ece.handshake.model.data.SMAccount;
+import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.Profile;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+
+import de.greenrobot.event.EventBus;
 
 
 public class MainActivity extends AppCompatActivity
@@ -89,6 +95,9 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onSuccess(LoginResult loginResult) {
                 Toast.makeText(getApplicationContext(), "Succesfully Facebook Login", Toast.LENGTH_LONG).show();
+                Profile profile = Profile.getCurrentProfile();
+                SMAccount account = new SMAccount(profile.getName(), getString(R.string.platform_name_facebook), profile.getLinkUri(), profile.getProfilePictureUri(64, 64), AccessToken.getCurrentAccessToken().getToken());
+                EventBus.getDefault().post(new NewAccountEvent(account));
             }
 
             @Override

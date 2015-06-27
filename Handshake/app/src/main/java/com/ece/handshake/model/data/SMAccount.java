@@ -1,38 +1,61 @@
 package com.ece.handshake.model.data;
 
+import android.net.Uri;
 
 public class SMAccount {
-    private int mPlatformImgId;
+    private String mName;
     private String mPlatformName;
-    private String mUserId;
+    private Uri mLinkUri;
+    private Uri mProfilePicUri;
+    private String mAccessToken;
 
-    public SMAccount(int platformImgId, String platformName, String userId) {
-        mPlatformImgId = platformImgId;
+    public SMAccount() {}
+
+    public SMAccount(String name, String platformName, Uri linkUri, Uri profilePictureUri, String accessToken) {
+        mName = name;
         mPlatformName = platformName;
-        mUserId = userId;
+        mLinkUri = linkUri;
+        mProfilePicUri = profilePictureUri;
+        mAccessToken = accessToken;
     }
 
-    public int getPlatformImgId() {
-        return mPlatformImgId;
-    }
-
-    public void setPlatformImgId(int mAccountPlatformImgId) {
-        this.mPlatformImgId = mAccountPlatformImgId;
+    public String getName() {
+        return mName;
     }
 
     public String getPlatformName() {
         return mPlatformName;
     }
 
-    public void setPlatformName(String mAccountPlatformName) {
-        this.mPlatformName = mAccountPlatformName;
+    public Uri getLinkUri() {
+        return mLinkUri;
     }
 
-    public String getUserId() {
-        return mUserId;
+    public Uri getProfilePicUri() {
+        return mProfilePicUri;
     }
 
-    public void setUserId(String mUserId) {
-        this.mUserId = mUserId;
+    public String getAccessToken() {
+        return mAccessToken;
+    }
+
+    public void setName(String mName) {
+        this.mName = mName;
+    }
+
+    public void setPlatformName(String mPlatformName) {
+        this.mPlatformName = mPlatformName;
+    }
+
+    public void setLinkUri(Uri mLinkUri) {
+        this.mLinkUri = mLinkUri;
+    }
+
+    public void setProfilePicUri(Uri mProfilePicUri) {
+        this.mProfilePicUri = mProfilePicUri;
+    }
+
+    public void setAccessToken(String mAccessToken) {
+        this.mAccessToken = mAccessToken;
     }
 }

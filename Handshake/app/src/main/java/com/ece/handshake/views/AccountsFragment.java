@@ -39,7 +39,7 @@ public class AccountsFragment extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         ArrayList<SMAccount> accounts = new ArrayList<>();
-        accounts.add(new SMAccount(0, "Facebook", "zsherif"));
+       // accounts.add(new SMAccount(0, "Facebook", "zsherif"));
         mAdapter = new AccountsAdapter(accounts);
 
         mRecyclerView.setAdapter(mAdapter);

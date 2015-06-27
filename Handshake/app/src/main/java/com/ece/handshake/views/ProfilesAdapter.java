@@ -37,7 +37,7 @@ public class ProfilesAdapter extends RecyclerView.Adapter<ProfilesAdapter.ViewHo
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
         final SMAccount row = mDataset.get(position);
-        holder.mAccountUserId.setText(row.getUserId());
+        holder.mAccountUserId.setText(row.getName());
         holder.mPlatformName.setText(row.getPlatformName());
         //holder.mPlatformImage.setImageDrawable(MediaPlatformHelper.getAccountImageResource(row.getPlatformImgId()));
         holder.mSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
