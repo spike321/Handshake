@@ -28,7 +28,11 @@ import com.ece.handshake.helper.MediaPlatformHelper;
 import com.ece.handshake.R;
 import com.ece.handshake.helper.SharedPreferencesManager;
 import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
 
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
@@ -39,10 +43,9 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         NfcAdapter.CreateNdefMessageCallback{
 
-    public CallbackManager callbackManager;
+    public CallbackManager mCallbackManager;
     private NfcAdapter mNfcAdapter;
 
-    private Toolbar mToolBar;
     private DrawerLayout mDrawer;
     private ActionBarDrawerToggle mDrawerToggle;
 
@@ -52,13 +55,15 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         MediaPlatformHelper.initializePlatformImgMapping(this);
         checkIsLoggedIn();
-        //EventBus.getDefault().register(this);
 
-        mToolBar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(mToolBar);
+        FacebookSdk.sdkInitialize(this);
+        initCallbacks();
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawer, mToolBar, R.string.drawer_open,  R.string.drawer_close);
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawer, toolbar, R.string.drawer_open,  R.string.drawer_close);
         mDrawer.setDrawerListener(mDrawerToggle);
 
         NavigationView navView = (NavigationView) findViewById(R.id.navigation);
@@ -66,7 +71,6 @@ public class MainActivity extends AppCompatActivity
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        FacebookSdk.sdkInitialize(this);
 
 
         /************ NFC Setup ****************/
@@ -77,6 +81,32 @@ public class MainActivity extends AppCompatActivity
             return;
         }
         mNfcAdapter.setNdefPushMessageCallback(this, this);
+    }
+
+    private void initCallbacks() {
+        mCallbackManager = CallbackManager.Factory.create();
+        LoginManager.getInstance().registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                Toast.makeText(getApplicationContext(), "Succesfully Facebook Login", Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onCancel() {
+                Toast.makeText(getApplicationContext(), "Cancelled Facebook Login", Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onError(FacebookException e) {
+                Toast.makeText(getApplicationContext(), "Failed Facebook Login: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        mCallbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -160,10 +190,12 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem menuItem) {
 
         FragmentManager fragmentManager = getSupportFragmentManager();
-        int id = menuItem.getItemId();
         switch (menuItem.getItemId()) {
             case R.id.drawer_item_connected_accounts:
                 fragmentManager.beginTransaction().replace(R.id.container, new AccountsFragment()).commit();
+                break;
+            case R.id.drawer_item_connection_profiles:
+                fragmentManager.beginTransaction().replace(R.id.container, new ProfilesFragment()).commit();
                 break;
             case R.id.drawer_item_settings:
                 //TODO: Make Settings page
@@ -190,9 +222,8 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (mDrawerToggle.onOptionsItemSelected(item)) return true;
+        return mDrawerToggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
 
-        return super.onOptionsItemSelected(item);
     }
 
 
@@ -214,9 +245,7 @@ public class MainActivity extends AppCompatActivity
                 md.update(signature.toByteArray());
                 Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
             }
-        } catch (PackageManager.NameNotFoundException e) {
-
-        } catch (NoSuchAlgorithmException e) {
+        } catch (PackageManager.NameNotFoundException | NoSuchAlgorithmException ignored) {
 
         }
     }

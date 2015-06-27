@@ -40,8 +40,7 @@ public class NewAccountAdapter extends RecyclerView.Adapter<NewAccountAdapter.Vi
     @Override
     public NewAccountAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.new_sm_account_row, parent, false);
-        ViewHolder vh = new ViewHolder(v);
-        return vh;
+        return new ViewHolder(v);
     }
 
     @Override

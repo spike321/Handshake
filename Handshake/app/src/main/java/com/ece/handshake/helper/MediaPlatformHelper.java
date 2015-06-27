@@ -16,12 +16,12 @@ public class MediaPlatformHelper {
 
     public static void initializePlatformImgMapping(Context context) {
         final Resources res = context.getResources();
-        platformImgMap.put(context.getString(R.string.platform_type_facebook), res.getDrawable(R.drawable.facebook_icon));
-        platformImgMap.put(context.getString(R.string.platform_type_twitter), res.getDrawable(R.drawable.twitter_icon));
-        platformImgMap.put(context.getString(R.string.platform_type_linkedIn), res.getDrawable(R.drawable.linkedin_icon));
-        platformImgMap.put(context.getString(R.string.platform_type_instagram), res.getDrawable(R.drawable.instagram_icon));
-        platformImgMap.put(context.getString(R.string.platform_type_google_plus), res.getDrawable(R.drawable.google_plus_icon));
-        platformImgMap.put(context.getString(R.string.platform_type_pinterest), res.getDrawable(R.drawable.pinterest_icon));
+        platformImgMap.put(context.getString(R.string.platform_name_facebook), res.getDrawable(R.drawable.facebook_icon));
+        platformImgMap.put(context.getString(R.string.platform_name_twitter), res.getDrawable(R.drawable.twitter_icon));
+        platformImgMap.put(context.getString(R.string.platform_name_linkedIn), res.getDrawable(R.drawable.linkedin_icon));
+        platformImgMap.put(context.getString(R.string.platform_name_instagram), res.getDrawable(R.drawable.instagram_icon));
+        platformImgMap.put(context.getString(R.string.platform_name_google_plus), res.getDrawable(R.drawable.google_plus_icon));
+        platformImgMap.put(context.getString(R.string.platform_name_pinterest), res.getDrawable(R.drawable.pinterest_icon));
 
     }
 
@@ -35,6 +35,7 @@ public class MediaPlatformHelper {
         Collections.sort(platforms);
         return platforms;
     }
+
     public static Drawable getAccountImageResource(String platform) {
         return platformImgMap.get(platform);
     }

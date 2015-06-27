@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ece.handshake.R;
+import com.ece.handshake.helper.MediaPlatformHelper;
 import com.ece.handshake.model.data.SMAccount;
 
 import java.util.ArrayList;
@@ -44,7 +45,7 @@ public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.ViewHo
         SMAccount account = mDataset.get(i);
         viewHolder.mAccountUserId.setText(account.getUserId());
         viewHolder.mPlatformName.setText(account.getPlatformName());
-
+        //viewHolder.mPlatformImage.setImageDrawable();
     }
 
     @Override

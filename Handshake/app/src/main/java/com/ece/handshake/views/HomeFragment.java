@@ -26,7 +26,7 @@ public class HomeFragment extends Fragment{
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        ((MainActivity)getActivity()).callbackManager.onActivityResult(requestCode, resultCode, data);
+        ((MainActivity)getActivity()).mCallbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
