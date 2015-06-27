@@ -25,6 +25,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.widget.Toast;
 
 import com.ece.handshake.events.NewAccountEvent;
+import com.ece.handshake.events.TwitterLoginEvent;
 import com.ece.handshake.helper.MediaPlatformHelper;
 import com.ece.handshake.R;
 import com.ece.handshake.helper.SharedPreferencesManager;
@@ -35,14 +36,26 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.Profile;
+import com.facebook.ProfileTracker;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
+import com.twitter.sdk.android.Twitter;
+import com.twitter.sdk.android.core.Callback;
+import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.TwitterApiClient;
+import com.twitter.sdk.android.core.TwitterAuthConfig;
+import com.twitter.sdk.android.core.TwitterCore;
+import com.twitter.sdk.android.core.TwitterException;
+import com.twitter.sdk.android.core.TwitterSession;
+import com.twitter.sdk.android.core.identity.TwitterLoginButton;
+import com.twitter.sdk.android.core.models.User;
 
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import de.greenrobot.event.EventBus;
+import io.fabric.sdk.android.Fabric;
 
 
 public class MainActivity extends AppCompatActivity
@@ -55,14 +68,21 @@ public class MainActivity extends AppCompatActivity
     private DrawerLayout mDrawer;
     private ActionBarDrawerToggle mDrawerToggle;
 
+    private TwitterAuthConfig mAuthConfig;
+    private void initPlatforms() {
+        FacebookSdk.sdkInitialize(this);
+
+        mAuthConfig = new TwitterAuthConfig("SScUHc4jfNsporiWTQcKMerBx", "acMW4LyCZpcL0AWGmgfu1MhYkVMQM2ETn7KCeuzKygD2JC1DIi");
+        Fabric.with(this, new Twitter(mAuthConfig));
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         MediaPlatformHelper.initializePlatformImgMapping(this);
         checkIsLoggedIn();
-
-        FacebookSdk.sdkInitialize(this);
+        initPlatforms();
         initCallbacks();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -92,12 +112,23 @@ public class MainActivity extends AppCompatActivity
     private void initCallbacks() {
         mCallbackManager = CallbackManager.Factory.create();
         LoginManager.getInstance().registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+            private ProfileTracker mProfileTracker;
+
             @Override
             public void onSuccess(LoginResult loginResult) {
-                Toast.makeText(getApplicationContext(), "Succesfully Facebook Login", Toast.LENGTH_LONG).show();
-                Profile profile = Profile.getCurrentProfile();
-                SMAccount account = new SMAccount(profile.getName(), getString(R.string.platform_name_facebook), profile.getLinkUri(), profile.getProfilePictureUri(64, 64), AccessToken.getCurrentAccessToken().getToken());
-                EventBus.getDefault().post(new NewAccountEvent(account));
+                mProfileTracker = new ProfileTracker() {
+                    @Override
+                    protected void onCurrentProfileChanged(Profile oldProfile, Profile newProfile) {
+                        Profile.setCurrentProfile(newProfile);
+                        Toast.makeText(getApplicationContext(), "Succesfull Facebook Login", Toast.LENGTH_LONG).show();
+                        Profile profile = Profile.getCurrentProfile();
+                        SMAccount account = new SMAccount(profile.getName(), getString(R.string.platform_name_facebook), profile.getLinkUri(), profile.getProfilePictureUri(64, 64), AccessToken.getCurrentAccessToken().getToken());
+                        EventBus.getDefault().post(new NewAccountEvent(account));
+                        this.stopTracking();
+                    }
+                };
+                mProfileTracker.startTracking();
+
             }
 
             @Override
@@ -110,12 +141,38 @@ public class MainActivity extends AppCompatActivity
                 Toast.makeText(getApplicationContext(), "Failed Facebook Login: " + e.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
-    }
 
+
+    }
+//64206
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        mCallbackManager.onActivityResult(requestCode, resultCode, data);
+        //TODO:Replace hardcoded requestcodes
+        if (FacebookSdk.isFacebookRequestCode(requestCode)) {
+            mCallbackManager.onActivityResult(requestCode, resultCode, data);
+        } else if (TwitterAuthConfig.DEFAULT_AUTH_REQUEST_CODE == requestCode) {
+            mTwitterLoginButton.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    TwitterLoginButton mTwitterLoginButton;
+    public void onEvent(TwitterLoginEvent event) {
+        mTwitterLoginButton = new TwitterLoginButton(this);
+        mTwitterLoginButton.setCallback(new Callback<TwitterSession>() {
+            @Override
+            public void success(Result<TwitterSession> result) {
+                Toast.makeText(getApplicationContext(), "Successfully Twitter login", Toast.LENGTH_LONG).show();
+                
+            }
+
+            @Override
+            public void failure(TwitterException e) {
+                Toast.makeText(getApplicationContext(), "Failed Twitter login", Toast.LENGTH_LONG).show();
+
+            }
+        });
+        mTwitterLoginButton.performClick();
     }
 
     @Override
@@ -150,6 +207,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onResume() {
+        EventBus.getDefault().register(this);
         super.onResume();
         // Check to see that the Activity started due to an Android Beam
         if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction())) {
@@ -159,6 +217,12 @@ public class MainActivity extends AppCompatActivity
             i.setAction("do_nothing");
             setIntent(i);
         }
+    }
+
+    @Override
+    public void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onResume();
     }
 
     @Override
